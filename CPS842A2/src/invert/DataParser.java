@@ -2,6 +2,12 @@
 package invert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class DataParser {
 	public DataParser(){
@@ -136,5 +142,41 @@ public class DataParser {
 			}
 			list.get(i).setContent(list.get(i).getTitle()+" "+list.get(i).getAbstract());
 		}
+	}
+	//generates the appropriate map for the dictionary file (alphabetically sorted terms as keys, and values being their document frequency
+	public String generateDictionaryString(ArrayList<Document> list) {
+		String result = "";
+		HashMap<String, Integer> docFrequencyMap = new HashMap<String, Integer>();
+		ArrayList<String> allTerms = new ArrayList<String>();
+		
+		for(Document doc : list) {
+			List<String> terms = Arrays.asList(doc.getTermArray());
+			HashMap<String, Boolean> temp = new HashMap<String,Boolean>();
+			for(int i = 0; i < terms.size(); i++) {
+				allTerms.add(terms.get(i));
+				//if statement makes sure only the first instance of each term in a doc is recorded
+				if(temp.get(terms.get(i))==null) {
+					temp.put(terms.get(i),true);
+					int count = docFrequencyMap.containsKey(terms.get(i)) ? docFrequencyMap.get(terms.get(i)) : 0;
+					docFrequencyMap.put(terms.get(i), count+1);
+				}
+			}
+			
+		}
+		docFrequencyMap.remove("");
+		
+		Map<String, Integer> sortedDocFrequencyMap = new TreeMap<String, Integer>(docFrequencyMap);
+		
+		allTerms = (ArrayList<String>) allTerms.stream().distinct().sorted().collect(Collectors.toList());
+		ArrayList<String> newAllTerms = new ArrayList<String>();
+		for(int i = 0; i < allTerms.size(); i++) {
+			if(!allTerms.get(i).equals("")) {
+				newAllTerms.add(allTerms.get(i));
+			}
+		}
+		for(String term : newAllTerms) {
+			result+="Term: "+term+", DF: "+sortedDocFrequencyMap.get(term)+"\n";
+		}
+		return result;
 	}
 }

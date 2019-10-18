@@ -8,7 +8,8 @@ public class Main {
 	public static void main(String[] args) {
 		//create arraylists from cacm.all and stopwords.txt files
 		FileHandler fileHandler = new FileHandler();
-		ArrayList<String> cacmList = fileHandler.generateArrayFromFile("src/invert/input/cacm.all");
+		//ArrayList<String> cacmList = fileHandler.generateArrayFromFile("src/invert/input/cacm.all");
+		ArrayList<String> cacmList = fileHandler.generateArrayFromFile("src/invert/input/test.txt");
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Would you like to enable stopword filtering? Y/N");
 		String filterInput = scan.next();
@@ -33,21 +34,14 @@ public class Main {
 		}
 		
 		
-		for(Document doc: modifiedDocList) {
-			System.out.println("ID: "+doc.getId());
-			System.out.println("Title: "+doc.getTitle());
-			System.out.println("Abstract: "+doc.getAbstract());
-			System.out.println("Date: "+doc.getDate());
-			System.out.println("Authors: "+doc.getAuthors());
-			System.out.println("Content: "+doc.getContent());
-		}
-		
 		
 		//TODO: grab the required information to create proper dictionary/postings files
 		//create and write dictionary and postings files
-		String dictionaryContent = "dictionary filler";
+		String dictionaryContent = parser.generateDictionaryString(modifiedDocList);
 		String postingsContent = "postings filler";
 		fileHandler.printFile("dictionary.txt", dictionaryContent);
+		System.out.println("dictionary.txt created");
 		fileHandler.printFile("postings.txt", postingsContent);
+		System.out.println("postings.txt created");
 	}
 }

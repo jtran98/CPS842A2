@@ -54,4 +54,19 @@ public class Document {
 	public void setContent(String content) {
 		this.content = content;
 	}
+	public void autoGenerateContent() {
+		this.content = this.title+" "+this.articleAbstract;
+	}
+	public String[] getTermArray() {
+		return this.content.split("\\s+");
+	}
+	public int positionOf(String term) {
+		String[] terms = this.content.split("\\s+");
+		for(int i = 0; i < terms.length; i++) {
+			if(terms[i].equals(term)) {
+				return i;
+			}
+		}
+		return -1;
+	}
 }
