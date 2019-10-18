@@ -1,3 +1,4 @@
+//Jacky Tran 500766582
 package invert;
 
 import java.io.File;
@@ -9,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
+//handles files
 public class FileHandler {
 	public FileHandler() {
 	}
@@ -25,6 +27,7 @@ public class FileHandler {
 		}
 		return array;
 	}
+	//Prints a file into the output folder, requires a file name and the file's content as a string
 	public void printFile(String fileName, String fileContent) {
 		byte[] bytesArray = fileContent.getBytes();
 		try {

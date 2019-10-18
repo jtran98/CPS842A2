@@ -1,12 +1,13 @@
 package invert;
 
+//document object to help organize the cacm file
 public class Document {
-	String id;
-	String title;
-	String articleAbstract;
-	String publicationDate;
-	String authorList;
-	String content;
+	private String id = "";
+	private String title = "";
+	private String articleAbstract = "";
+	private String publicationDate = "";
+	private String authorList = "";
+	private String content = "";
 	public Document(String id, String title, String articleAbstract, String publicationDate, String authorList) {
 		this.id = id;
 		this.title = title;
@@ -47,7 +48,7 @@ public class Document {
 	public void setAuthors(String authorList) {
 		this.authorList = authorList;
 	}
-	public String getcontent() {
+	public String getContent() {
 		return content;
 	}
 	public void setContent(String content) {
