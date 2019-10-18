@@ -1,5 +1,10 @@
 package invert;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 //document object to help organize the cacm file
 public class Document {
 	private String id = "";
@@ -55,18 +60,27 @@ public class Document {
 		this.content = content;
 	}
 	public void autoGenerateContent() {
-		this.content = this.title+" "+this.articleAbstract;
+		if(this.title.length() > 0 && this.articleAbstract.length() > 0) {
+			this.content = this.title+" "+this.articleAbstract;
+		}
+		else if (this.title.length() == 0) {
+			this.content = this.articleAbstract;
+		}
+		else if (this.articleAbstract.length() == 0){
+			this.content = this.title;
+		}
 	}
-	public String[] getTermArray() {
+	public String[] toArray() {
 		return this.content.split("\\s+");
 	}
-	public int positionOf(String term) {
-		String[] terms = this.content.split("\\s+");
-		for(int i = 0; i < terms.length; i++) {
-			if(terms[i].equals(term)) {
-				return i;
+	public ArrayList<Integer> getTermPositions(String term) {
+		List<String> terms = Arrays.asList(this.content.split("\\s+")).stream().collect(Collectors.toList());
+		ArrayList<Integer> positions = new ArrayList<Integer>();
+		for(int i = 0; i < terms.size(); i++) {
+			if(terms.get(i).equalsIgnoreCase(term)) {
+				positions.add(i);
 			}
 		}
-		return -1;
+		return positions;
 	}
 }

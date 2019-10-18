@@ -143,30 +143,36 @@ public class DataParser {
 			list.get(i).setContent(list.get(i).getTitle()+" "+list.get(i).getAbstract());
 		}
 	}
-	//generates the appropriate map for the dictionary file (alphabetically sorted terms as keys, and values being their document frequency
-	public String generateDictionaryString(ArrayList<Document> list) {
-		String result = "";
-		HashMap<String, Integer> docFrequencyMap = new HashMap<String, Integer>();
+	//generates the appropriate string for the dictionary file (alphabetically sorted terms as keys, and values being their document frequency)
+	public void generateDictionaryFile(ArrayList<Document> list) {
+		FileHandler fileHandler = new FileHandler();
+		fileHandler.printFile("dictionary.txt", "");
+		HashMap<String, Integer> termFrequencyMap = new HashMap<String, Integer>();
 		ArrayList<String> allTerms = new ArrayList<String>();
-		
+		//for every document, break down the content into a string array and find first occurrence of every term
 		for(Document doc : list) {
-			List<String> terms = Arrays.asList(doc.getTermArray());
+			List<String> terms = Arrays.asList(doc.toArray());
 			HashMap<String, Boolean> temp = new HashMap<String,Boolean>();
+			//for every term in the content variable of the document
 			for(int i = 0; i < terms.size(); i++) {
+				//add every term to allTerms, will be sorted later to contain only distinct terms
 				allTerms.add(terms.get(i));
 				//if statement makes sure only the first instance of each term in a doc is recorded
 				if(temp.get(terms.get(i))==null) {
 					temp.put(terms.get(i),true);
-					int count = docFrequencyMap.containsKey(terms.get(i)) ? docFrequencyMap.get(terms.get(i)) : 0;
-					docFrequencyMap.put(terms.get(i), count+1);
+					//increase count everytime a term appears (only once per document)
+					int count = termFrequencyMap.containsKey(terms.get(i)) ? termFrequencyMap.get(terms.get(i)) : 0;
+					termFrequencyMap.put(terms.get(i), count+1);
 				}
 			}
 			
 		}
-		docFrequencyMap.remove("");
+		//removes empty indicies
+		termFrequencyMap.remove("");
+		//sorts map
+		Map<String, Integer> sortedDocFrequencyMap = new TreeMap<String, Integer>(termFrequencyMap);
 		
-		Map<String, Integer> sortedDocFrequencyMap = new TreeMap<String, Integer>(docFrequencyMap);
-		
+		//sorts all terms alphabetically
 		allTerms = (ArrayList<String>) allTerms.stream().distinct().sorted().collect(Collectors.toList());
 		ArrayList<String> newAllTerms = new ArrayList<String>();
 		for(int i = 0; i < allTerms.size(); i++) {
@@ -175,8 +181,54 @@ public class DataParser {
 			}
 		}
 		for(String term : newAllTerms) {
-			result+="Term: "+term+", DF: "+sortedDocFrequencyMap.get(term)+"\n";
+			fileHandler.appendFile("dictionary.txt", "Term: "+term+"\nDF: "+sortedDocFrequencyMap.get(term)+"\n");
 		}
-		return result;
+	}
+	
+	/**generates string for postings file, contains every term, which documents they show up in (using sorted document ids), how
+	many times they occur in each document and in which positions
+	*/
+	public void generatePostingsFile(ArrayList<Document> list) {
+		FileHandler fileHandler = new FileHandler();
+		fileHandler.printFile("postings.txt", "");
+		ArrayList<String> allTerms = new ArrayList<String>();
+		//create arraylist containing every unique term in all documents
+		for(Document doc : list) {
+			List<String> terms = Arrays.asList(doc.toArray()).stream().sorted().collect(Collectors.toList());
+			for(int i = 0; i < terms.size(); i++) {
+				if(terms.get(i).equals("")) {
+					terms.remove(i);
+					continue;
+				}
+				allTerms.add(terms.get(i));
+			}			
+		}
+		//sorting and removing empty indices
+		allTerms = (ArrayList<String>) allTerms.stream().distinct().sorted().collect(Collectors.toList());
+		ArrayList<String> newAllTerms = new ArrayList<String>();
+		for(int i = 0; i < allTerms.size(); i++) {
+			if(!allTerms.get(i).equals("")) {
+				newAllTerms.add(allTerms.get(i));
+			}
+		}
+		for(String term : newAllTerms) {
+			fileHandler.appendFile("postings.txt", "Term: "+term+"\n");
+			for(Document doc : list) {
+				String result = "";
+				if(doc.getContent().contains(term)) {
+					result+="Doc #"+doc.getId()+"\n";
+					result+="Freq: "+doc.getTermPositions(term).size()+"\n";
+					result+="positions(s): ";
+					ArrayList<Integer> positions = doc.getTermPositions(term);
+					for(int i = 0; i < positions.size(); i++) {
+						result +=positions.get(i)+1+",";
+					}
+					//remove final comma
+					result = result.substring(0,result.length()-1);
+					result+="\n";
+					fileHandler.appendFile("postings.txt",result);
+				}
+			}
+		}
 	}
 }

@@ -46,4 +46,17 @@ public class FileHandler {
 		}
 		
 	}
+	public void appendFile(String fileName, String fileContent) {
+		byte[] bytesArray = fileContent.getBytes();
+		try {
+			File file = new File("src/invert/output/"+fileName);
+			FileOutputStream outputStream = new FileOutputStream(file,true);
+			outputStream.write(bytesArray);
+			outputStream.flush();
+			outputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("Error: Could not write to file");
+		}
+	}
 }
