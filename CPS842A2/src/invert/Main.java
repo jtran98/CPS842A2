@@ -9,7 +9,6 @@ public class Main {
 		//create arraylists from cacm.all and stopwords.txt files
 		FileHandler fileHandler = new FileHandler();
 		ArrayList<String> cacmList = fileHandler.generateArrayFromFile("src/invert/input/cacm.all");
-		//ArrayList<String> cacmList = fileHandler.generateArrayFromFile("src/invert/input/test.txt");
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Would you like to enable stopword filtering? Y/N");
 		String filterInput = scan.next();
