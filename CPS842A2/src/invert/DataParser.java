@@ -27,7 +27,12 @@ public class DataParser {
 					}
 					title += contentList.get(j)+" ";
 				}
-				doc.setTitle(title.substring(0,title.length()).replaceAll("\\p{Punct}", "").toLowerCase());
+				String[] titleArr = title.replaceAll("\\p{Punct}", "").toLowerCase().split("\\s+");
+				String temp = "";
+				for(int j = 0; j < titleArr.length; j++) {
+					temp += titleArr[j]+" ";
+				}
+				doc.setTitle(temp.substring(0,temp.length()-1));
 			}
 			//get abstract
 			else if(contentList.get(i).equals(".W")) {
@@ -38,7 +43,12 @@ public class DataParser {
 						break;
 					}
 				}
-				doc.setAbstract(docAbstract.substring(0,docAbstract.length()-1).replaceAll("\\p{Punct}", "").toLowerCase());
+				String[] abstractArr = docAbstract.replaceAll("\\p{Punct}", "").toLowerCase().split("\\s+");
+				String temp = "";
+				for(int j = 0; j < abstractArr.length; j++) {
+					temp += abstractArr[j]+" ";
+				}
+				doc.setAbstract(temp.substring(0,temp.length()-1));
 			}
 			//get publication date
 			else if(contentList.get(i).equals(".B")) {
@@ -106,8 +116,18 @@ public class DataParser {
 		for(int i = 0; i < list.size(); i++) {
 			//for every line in the list, check through every filter word and remove all instances of the filter word if they appear
 			for(String filter: stopwordsList) {
-				list.get(i).setTitle(list.get(i).getTitle().replaceAll("\\b"+filter+"\\b", ""));
-				list.get(i).setAbstract(list.get(i).getAbstract().replaceAll("\\b"+filter+"\\b", ""));
+				String[] filteredTitle = list.get(i).getTitle().replaceAll("\\b"+filter+"\\b", "").split("\\s+");
+				String[] filteredAbstract = list.get(i).getAbstract().replaceAll("\\b"+filter+"\\b", "").split("\\s+");
+				String temp = "";
+				for(int j = 0; j < filteredTitle.length; j++) {
+					temp += filteredTitle[j]+" ";
+				}
+				list.get(i).setTitle(temp.substring(0,temp.length()-1));
+				temp = "";
+				for(int j = 0; j < filteredAbstract.length; j++) {
+					temp += filteredAbstract[j]+" ";
+				}
+				list.get(i).setAbstract(temp.substring(0,temp.length()-1));
 			}
 			//remove characters of whitespace at the beginning
 			while(list.get(i).getTitle().startsWith(" ")){
