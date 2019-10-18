@@ -10,6 +10,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class DataParser {
+	final int INTERVAL_BETWEEN_WRITES = 50;
 	public DataParser(){
 	}
 	public ArrayList<Document> createDocumentArray(ArrayList<String> contentList){
@@ -180,9 +181,18 @@ public class DataParser {
 				newAllTerms.add(allTerms.get(i));
 			}
 		}
+		String result = "";
+		int index = 0;
 		for(String term : newAllTerms) {
-			fileHandler.appendFile("dictionary.txt", "Term: "+term+"\nDF: "+sortedDocFrequencyMap.get(term)+"\n");
+			result +="Term: "+term+"\nDF: "+sortedDocFrequencyMap.get(term)+"\n";
+			if(index == INTERVAL_BETWEEN_WRITES) {
+				fileHandler.appendFile("dictionary.txt", result);
+				index = 0;
+				result = "";
+			}
+			index++;
 		}
+		fileHandler.appendFile("dictionary.txt", result);
 	}
 	
 	/**generates string for postings file, contains every term, which documents they show up in (using sorted document ids), how
@@ -211,24 +221,33 @@ public class DataParser {
 				newAllTerms.add(allTerms.get(i));
 			}
 		}
+		int index = 0;
+		String result = "";
 		for(String term : newAllTerms) {
-			fileHandler.appendFile("postings.txt", "Term: "+term+"\n");
+			result += "Term: "+term+"\n";
 			for(Document doc : list) {
-				String result = "";
 				if(doc.getContent().contains(term)) {
-					result+="Doc #"+doc.getId()+"\n";
-					result+="Freq: "+doc.getTermPositions(term).size()+"\n";
-					result+="positions(s): ";
-					ArrayList<Integer> positions = doc.getTermPositions(term);
-					for(int i = 0; i < positions.size(); i++) {
-						result +=positions.get(i)+1+",";
+					if(doc.getTermPositions(term).size()>0) {
+						result+="Doc #"+doc.getId()+"\n";
+						result+="Freq: "+doc.getTermPositions(term).size()+"\n";
+						result+="Pos: ";
+						ArrayList<Integer> positions = doc.getTermPositions(term);
+						for(int i = 0; i < positions.size(); i++) {
+							result +=positions.get(i)+1+",";
+						}
+						//remove final comma
+						result = result.substring(0,result.length()-1);
+						result+="\n";
 					}
-					//remove final comma
-					result = result.substring(0,result.length()-1);
-					result+="\n";
-					fileHandler.appendFile("postings.txt",result);
 				}
 			}
+			index++;
+			if(index == INTERVAL_BETWEEN_WRITES) {
+				fileHandler.appendFile("postings.txt", result);
+				index = 0;
+				result = "";
+			}
 		}
+		fileHandler.appendFile("postings.txt", result);
 	}
 }
