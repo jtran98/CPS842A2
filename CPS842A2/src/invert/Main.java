@@ -33,7 +33,6 @@ public class Main {
 		}
 		
 		
-		
 		for(Document doc: modifiedDocList) {
 			System.out.println("ID: "+doc.getId());
 			System.out.println("Title: "+doc.getTitle());

@@ -71,7 +71,6 @@ public class DataParser {
 		docList.add(doc);
 		return docList;
 	}
-	
 	//stems all the words in the document array's title and abstract fields, as well as updates the content fields
 	public void applyStemming(ArrayList<Document> list){
 		for(int i = 0; i < list.size(); i++) {
@@ -108,7 +107,6 @@ public class DataParser {
 			list.get(i).setContent(list.get(i).getTitle()+" "+list.get(i).getAbstract());
 		}
 	}
-	
 	//filters out all the stopwords in all the titles and abstracts of the document array, as well as updating the content fields
 	public void applyStopwordFilter(ArrayList<Document> list){
 		FileHandler fileHandler = new FileHandler();
