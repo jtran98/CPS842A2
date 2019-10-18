@@ -27,7 +27,7 @@ public class DataParser {
 					}
 					title += contentList.get(j)+" ";
 				}
-				doc.setTitle(title.substring(0,title.length()));
+				doc.setTitle(title.substring(0,title.length()).replaceAll("\\p{Punct}", "").toLowerCase());
 			}
 			//get abstract
 			else if(contentList.get(i).equals(".W")) {
@@ -38,7 +38,7 @@ public class DataParser {
 						break;
 					}
 				}
-				doc.setAbstract(docAbstract.substring(0,docAbstract.length()-1));
+				doc.setAbstract(docAbstract.substring(0,docAbstract.length()-1).replaceAll("\\p{Punct}", "").toLowerCase());
 			}
 			//get publication date
 			else if(contentList.get(i).equals(".B")) {
@@ -64,15 +64,7 @@ public class DataParser {
 	
 	//stems all the words in the document array's title and abstract fields, as well as updates the content fields
 	public void applyStemming(ArrayList<Document> list){
-		for(Document doc : list) {
-			doc.setTitle(doc.getTitle().toLowerCase());
-			doc.setAbstract(doc.getAbstract().toLowerCase());
-		}
 		for(int i = 0; i < list.size(); i++) {
-			//first, remove all punctuation
-			list.get(i).setTitle(list.get(i).getTitle().replaceAll("\\p{Punct}", ""));
-			list.get(i).setAbstract(list.get(i).getAbstract().replaceAll("\\p{Punct}", ""));
-			
 			//break down each line into individual words, stem each word, then remake the new line with the stemmed words
 			Stemmer titleStemmer = new Stemmer();
 			Stemmer abstractStemmer = new Stemmer();
@@ -111,14 +103,7 @@ public class DataParser {
 	public void applyStopwordFilter(ArrayList<Document> list){
 		FileHandler fileHandler = new FileHandler();
 		ArrayList<String> stopwordsList = fileHandler.generateArrayFromFile("src/invert/input/stopwords.txt");
-		for(Document doc : list) {
-			doc.setTitle(doc.getTitle().toLowerCase());
-			doc.setAbstract(doc.getAbstract().toLowerCase());
-		}
 		for(int i = 0; i < list.size(); i++) {
-			//first, remove all punctuation
-			list.get(i).setTitle(list.get(i).getTitle().replaceAll("\\p{Punct}", ""));
-			list.get(i).setAbstract(list.get(i).getAbstract().replaceAll("\\p{Punct}", ""));
 			//for every line in the list, check through every filter word and remove all instances of the filter word if they appear
 			for(String filter: stopwordsList) {
 				list.get(i).setTitle(list.get(i).getTitle().replaceAll("\\b"+filter+"\\b", ""));

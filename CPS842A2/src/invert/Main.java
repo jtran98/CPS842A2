@@ -33,7 +33,7 @@ public class Main {
 		}
 		
 		
-		/**
+		
 		for(Document doc: modifiedDocList) {
 			System.out.println("ID: "+doc.getId());
 			System.out.println("Title: "+doc.getTitle());
@@ -42,7 +42,7 @@ public class Main {
 			System.out.println("Authors: "+doc.getAuthors());
 			System.out.println("Content: "+doc.getContent());
 		}
-		*/
+		
 		
 		//TODO: grab the required information to create proper dictionary/postings files
 		//create and write dictionary and postings files
