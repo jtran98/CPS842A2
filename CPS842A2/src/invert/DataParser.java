@@ -77,7 +77,7 @@ public class DataParser {
 				}
 				doc.setAuthors(temp.substring(0,temp.length()-1));
 			}
-			doc.setContent(doc.getTitle()+" "+doc.getAbstract());
+			doc.setContent(doc.getTitle()+" "+doc.getAbstract()+" "+doc.getAuthors());
 		}
 		//adds final document to document array
 		docList.add(doc);
@@ -233,6 +233,7 @@ public class DataParser {
 		ArrayList<String> tempTerms = new ArrayList<String>();
 		//create arraylist containing every unique term in all documents
 		for(Document doc : list) {
+			System.out.println(doc.getContent());
 			List<String> terms = Arrays.asList(doc.toArray()).stream().sorted().collect(Collectors.toList());
 			for(int i = 0; i < terms.size(); i++) {
 				if(terms.get(i).equals("")) {

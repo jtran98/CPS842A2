@@ -39,7 +39,6 @@ public class Main {
 		
 		System.out.println("Please input your first query.");
 		String userInput = scan.nextLine();
-		ArrayList<String> allTerms = parser.getAllTerms(modifiedDocList);
 		QueryHandler queryHandler = new QueryHandler();
 		while(!userInput.equalsIgnoreCase("ZZEND")) {
 			//turn the user's input into a document object's abstract value, since stemming/stopword filter works specifically for document arraylists
@@ -52,11 +51,14 @@ public class Main {
 			if(stemInput.equalsIgnoreCase("Y")) {
 				parser.applyStemming(temp);
 			}
-			String[] newInput = temp.get(0).getAbstract().split("\\s+");
-			
+			String[] inputArray = temp.get(0).getAbstract().split("\\s+");
+			ArrayList<String> newInput = new ArrayList<String>();
+			for(int i = 0; i < inputArray.length; i++) {
+				newInput.add(inputArray[i].toLowerCase());
+			}
 			
 			queryHandler.parseQuery(docList, modifiedDocList, newInput);
-			//TODO: do something with the query here
+			
 			System.out.println("Please input your next query, or 'ZZEND' to finish.");
 			userInput = scan.nextLine();
 		}
