@@ -1,8 +1,12 @@
 //Jacky Tran 500766582
-package invert;
+package search;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import invert.DataParser;
+import invert.Document;
+import invert.FileHandler;
 
 public class Main {
 	public static void main(String[] args) {
@@ -24,7 +28,7 @@ public class Main {
 		}
 		scan.close();
 		DataParser parser = new DataParser();
-		//ArrayList<Document> docList = parser.createDocumentArray(cacmList);
+		ArrayList<Document> docList = parser.createDocumentArray(cacmList);
 		ArrayList<Document> modifiedDocList = parser.createDocumentArray(cacmList);
 		if(filterInput.equalsIgnoreCase("Y")) {
 			parser.applyStopwordFilter(modifiedDocList);
@@ -33,9 +37,5 @@ public class Main {
 			parser.applyStemming(modifiedDocList);
 		}
 		
-		parser.generateDictionaryFile(modifiedDocList);
-		System.out.println("dictionary.txt created");
-		parser.generatePostingsFile(modifiedDocList);
-		System.out.println("postings.txt created");
 	}
 }

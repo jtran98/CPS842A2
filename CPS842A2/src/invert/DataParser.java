@@ -149,15 +149,13 @@ public class DataParser {
 		FileHandler fileHandler = new FileHandler();
 		fileHandler.printFile("dictionary.txt", "");
 		HashMap<String, Integer> termFrequencyMap = new HashMap<String, Integer>();
-		ArrayList<String> allTerms = new ArrayList<String>();
+		//ArrayList<String> allTerms = new ArrayList<String>();
 		//for every document, break down the content into a string array and find first occurrence of every term
 		for(Document doc : list) {
 			List<String> terms = Arrays.asList(doc.toArray());
 			HashMap<String, Boolean> temp = new HashMap<String,Boolean>();
 			//for every term in the content variable of the document
 			for(int i = 0; i < terms.size(); i++) {
-				//add every term to allTerms, will be sorted later to contain only distinct terms
-				allTerms.add(terms.get(i));
 				//if statement makes sure only the first instance of each term in a doc is recorded
 				if(temp.get(terms.get(i))==null) {
 					temp.put(terms.get(i),true);
@@ -172,18 +170,10 @@ public class DataParser {
 		termFrequencyMap.remove("");
 		//sorts map
 		Map<String, Integer> sortedDocFrequencyMap = new TreeMap<String, Integer>(termFrequencyMap);
-		
-		//sorts all terms alphabetically
-		allTerms = (ArrayList<String>) allTerms.stream().distinct().sorted().collect(Collectors.toList());
-		ArrayList<String> newAllTerms = new ArrayList<String>();
-		for(int i = 0; i < allTerms.size(); i++) {
-			if(!allTerms.get(i).equals("")) {
-				newAllTerms.add(allTerms.get(i));
-			}
-		}
+		ArrayList<String> allTerms = getAllTerms(list);
 		String result = "";
 		int index = 0;
-		for(String term : newAllTerms) {
+		for(String term : allTerms) {
 			result +="Term: "+term+"\nDF: "+sortedDocFrequencyMap.get(term)+"\n";
 			if(index == INTERVAL_BETWEEN_WRITES) {
 				fileHandler.appendFile("dictionary.txt", result);
@@ -201,29 +191,12 @@ public class DataParser {
 	public void generatePostingsFile(ArrayList<Document> list) {
 		FileHandler fileHandler = new FileHandler();
 		fileHandler.printFile("postings.txt", "");
-		ArrayList<String> allTerms = new ArrayList<String>();
-		//create arraylist containing every unique term in all documents
-		for(Document doc : list) {
-			List<String> terms = Arrays.asList(doc.toArray()).stream().sorted().collect(Collectors.toList());
-			for(int i = 0; i < terms.size(); i++) {
-				if(terms.get(i).equals("")) {
-					terms.remove(i);
-					continue;
-				}
-				allTerms.add(terms.get(i));
-			}			
-		}
-		//sorting and removing empty indices
-		allTerms = (ArrayList<String>) allTerms.stream().distinct().sorted().collect(Collectors.toList());
-		ArrayList<String> newAllTerms = new ArrayList<String>();
-		for(int i = 0; i < allTerms.size(); i++) {
-			if(!allTerms.get(i).equals("")) {
-				newAllTerms.add(allTerms.get(i));
-			}
-		}
+		
+		ArrayList<String> terms = getAllTerms(list);
+		
 		int index = 0;
 		String result = "";
-		for(String term : newAllTerms) {
+		for(String term : terms) {
 			result += "Term: "+term+"\n";
 			for(Document doc : list) {
 				if(doc.getContent().contains(term)) {
@@ -249,5 +222,29 @@ public class DataParser {
 			}
 		}
 		fileHandler.appendFile("postings.txt", result);
+	}
+	//generates arraylist containing all terms in a document list, sorted alphabetically
+	public ArrayList<String> getAllTerms(ArrayList<Document> list){
+		ArrayList<String> tempTerms = new ArrayList<String>();
+		//create arraylist containing every unique term in all documents
+		for(Document doc : list) {
+			List<String> terms = Arrays.asList(doc.toArray()).stream().sorted().collect(Collectors.toList());
+			for(int i = 0; i < terms.size(); i++) {
+				if(terms.get(i).equals("")) {
+					terms.remove(i);
+					continue;
+				}
+				tempTerms.add(terms.get(i));
+			}			
+		}
+		//sorting and removing empty indices
+		tempTerms = (ArrayList<String>) tempTerms.stream().distinct().sorted().collect(Collectors.toList());
+		ArrayList<String> allTerms = new ArrayList<String>();
+		for(int i = 0; i < tempTerms.size(); i++) {
+			if(!tempTerms.get(i).equals("")) {
+				allTerms.add(tempTerms.get(i));
+			}
+		}
+		return allTerms;
 	}
 }
