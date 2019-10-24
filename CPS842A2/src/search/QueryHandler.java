@@ -11,45 +11,47 @@ import invert.DataParser;
 import invert.Document;
 
 public class QueryHandler {
-	private int topK = 100;
-	private final double THRESHOLD = 0.00;
-	
-	Random rand = new Random(10);
+	private final double THRESHOLD = 0;
+	private final int NUMBER_OF_ENTRIES = 50;
 	public QueryHandler() {
 	}
 	public void parseQuery(ArrayList<Document> list, ArrayList<Document> modifiedList, ArrayList<String> query) {
-		if(topK > modifiedList.size()) {
-			topK = modifiedList.size();
+		int numberOfEntries = 100;
+		if(numberOfEntries > modifiedList.size()) {
+			numberOfEntries = modifiedList.size();
 		}
 		ArrayList<String> similarityList = new ArrayList<String>();
 		
 		for(int i = 0; i < modifiedList.size(); i++) {
 			//calculate similarity and add that to a list, as well as the doc's title and author names
 			double similarity = calculateCosineSimilarity(modifiedList, modifiedList.get(i), query);
-			if(similarity > 0) {
-				similarityList.add(String.format("Sim: %.5f, T: %s, A: %s", similarity, list.get(i).getTitle(), list.get(i).getAuthors()));
-			}
-			else
-			{
-				topK--;
+			if(similarity > THRESHOLD) {
+				similarityList.add(String.format("Sim: %.3f, T: %s, A: %s", similarity, list.get(i).getTitle(), list.get(i).getAuthors()));
 			}
 		}
 		//sort the array based on similarity values, since it is the first variable in each string
 		similarityList = (ArrayList<String>) similarityList.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
-		for(int i = 0; i < topK; i++) {
-			//add rank to every entry in similarityList
-			similarityList.set(i, "Rank: "+(i+1)+", "+similarityList.get(i));
-			System.out.println(similarityList.get(i));
+		if(similarityList.size() > NUMBER_OF_ENTRIES) {
+			for(int i = 0; i < NUMBER_OF_ENTRIES; i++) {
+				//add rank to every entry in similarityList
+				similarityList.set(i, "Rank: "+(i+1)+", "+similarityList.get(i));
+				System.out.println(similarityList.get(i));
+			}
 		}
-		if(topK == 0) {
+		else if(similarityList.size() > 0){
+			for(int i = 0; i < similarityList.size(); i++) {
+				//add rank to every entry in similarityList
+				similarityList.set(i, "Rank: "+(i+1)+", "+similarityList.get(i));
+				System.out.println(similarityList.get(i));
+			}
+		}
+		else {
 			System.out.println("No relevant documents.");
-			topK = 0;
 		}
 	}
 	//Calculates cosine similarity between a document and a query
 	public double calculateCosineSimilarity(ArrayList<Document> modifiedList, Document document, ArrayList<String> query) {
-		DataParser parser = new DataParser();
-		ArrayList<String> allTerms = parser.getAllTerms(modifiedList);
+		System.out.println("Computing cossim for doc #"+document.getId());
 		ArrayList<Double> docVector = new ArrayList<Double>();
 		ArrayList<Double> queryVector = new ArrayList<Double>();
 		String queryString = "";
@@ -61,7 +63,12 @@ public class QueryHandler {
 		//filling the doc/query vectors with weights for each term
 		//note that since the iteration is through allTerms which is calculated through cacm.all, any terms in the query not found in that file will be ignored
 		//since the idf would not be able to be calculated, as idf would be log(# of docs/0)
-		for(String term : allTerms) {
+		ArrayList<String> terms = new ArrayList<String>();
+		for(String str : document.toArray()) {
+			terms.add(str);
+		}
+		terms = (ArrayList<String>) terms.stream().distinct().sorted().collect(Collectors.toList());
+		for(String term : terms) {
 			int docFreq = document.getFrequencyOfTerm(term);
 			int queryFreq = queryAsDoc.getFrequencyOfTerm(term);
 			int termCount = 0;
@@ -87,7 +94,7 @@ public class QueryHandler {
 		double docMagnitude = 0;
 		double queryMagnitude = 0;
 		double numerator = 0;
-		for(int i = 0; i < allTerms.size(); i++) {
+		for(int i = 0; i < terms.size(); i++) {
 			docMagnitude += Math.pow(docVector.get(i),2);
 			queryMagnitude += Math.pow(queryVector.get(i), 2);
 			numerator += (docVector.get(i)*queryVector.get(i));
