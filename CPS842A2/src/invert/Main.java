@@ -11,16 +11,16 @@ public class Main {
 		ArrayList<String> cacmList = fileHandler.generateArrayFromFile("src/invert/input/cacm.all");
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Would you like to enable stopword filtering? Y/N");
-		String filterInput = scan.next();
+		String filterInput = scan.nextLine();
 		while(!filterInput.equalsIgnoreCase("Y") && !filterInput.equalsIgnoreCase("N")) {
 			System.out.println("Invalid input. Please try again.");
-			filterInput = scan.next();
+			filterInput = scan.nextLine();
 		}
 		System.out.println("Would you like to enable stemming? Y/N");
-		String stemInput = scan.next();
+		String stemInput = scan.nextLine();
 		while(!stemInput.equalsIgnoreCase("Y") && !stemInput.equalsIgnoreCase("N")) {
 			System.out.println("Invalid input. Please try again.");
-			stemInput = scan.next();
+			stemInput = scan.nextLine();
 		}
 		scan.close();
 		DataParser parser = new DataParser();
