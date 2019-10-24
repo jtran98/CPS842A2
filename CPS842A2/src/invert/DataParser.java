@@ -233,7 +233,6 @@ public class DataParser {
 		ArrayList<String> tempTerms = new ArrayList<String>();
 		//create arraylist containing every unique term in all documents
 		for(Document doc : list) {
-			System.out.println(doc.getContent());
 			List<String> terms = Arrays.asList(doc.toArray()).stream().sorted().collect(Collectors.toList());
 			for(int i = 0; i < terms.size(); i++) {
 				if(terms.get(i).equals("")) {
