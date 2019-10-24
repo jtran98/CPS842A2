@@ -22,9 +22,17 @@ public class QueryHandler {
 		}
 		ArrayList<String> similarityList = new ArrayList<String>();
 		
+		//calculate queryAsDoc once since there's no point doing it for every doc in the collection for the same query
+		Document queryAsDoc = new Document();
+		String queryString = "";
+		for(String str : query) {
+			queryString += str+" ";
+		}
+		queryAsDoc.setContent(queryString);
+		
 		for(int i = 0; i < modifiedList.size(); i++) {
 			//calculate similarity and add that to a list, as well as the doc's title and author names
-			double similarity = calculateCosineSimilarity(modifiedList, modifiedList.get(i), query);
+			double similarity = calculateCosineSimilarity(modifiedList, modifiedList.get(i), queryAsDoc, query);
 			if(similarity > THRESHOLD) {
 				similarityList.add(String.format("Sim: %.3f, T: %s, A: %s", similarity, list.get(i).getTitle(), list.get(i).getAuthors()));
 			}
@@ -50,24 +58,21 @@ public class QueryHandler {
 		}
 	}
 	//Calculates cosine similarity between a document and a query
-	public double calculateCosineSimilarity(ArrayList<Document> modifiedList, Document document, ArrayList<String> query) {
+	public double calculateCosineSimilarity(ArrayList<Document> modifiedList, Document document, Document queryAsDoc, ArrayList<String> query) {
 		System.out.println("Computing cossim for doc #"+document.getId());
 		ArrayList<Double> docVector = new ArrayList<Double>();
 		ArrayList<Double> queryVector = new ArrayList<Double>();
-		String queryString = "";
-		for(String str : query) {
-			queryString += str+" ";
-		}
-		Document queryAsDoc = new Document();
-		queryAsDoc.setContent(queryString);
-		//filling the doc/query vectors with weights for each term
-		//note that since the iteration is through allTerms which is calculated through cacm.all, any terms in the query not found in that file will be ignored
-		//since the idf would not be able to be calculated, as idf would be log(# of docs/0)
-		ArrayList<String> terms = new ArrayList<String>();
+		//creating the term vector that will be iterated through, contains all terms found in both the document and query
+		//ignores all other terms, since weight=TF*IDF and TF being 0 would make terms not found in either document/query adds unnecessary summing of 0s
+		//for the magnitude/dot product
+		ArrayList<String> terms = new ArrayList<String>(query);
+		
 		for(String str : document.toArray()) {
 			terms.add(str);
 		}
+		
 		terms = (ArrayList<String>) terms.stream().distinct().sorted().collect(Collectors.toList());
+		//filling the doc/query vectors with weights for each term
 		for(String term : terms) {
 			int docFreq = document.getFrequencyOfTerm(term);
 			int queryFreq = queryAsDoc.getFrequencyOfTerm(term);
