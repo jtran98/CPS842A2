@@ -70,7 +70,12 @@ public class DataParser {
 						break;
 					}
 				}
-				doc.setAuthors(authors.substring(0,authors.length()-1));
+				String[] authorsArr = authors.replaceAll("\\p{Punct}", "").toLowerCase().split("\\s+");
+				String temp = "";
+				for(int j = 0; j < authorsArr.length; j++) {
+					temp += authorsArr[j]+" ";
+				}
+				doc.setAuthors(temp.substring(0,temp.length()-1));
 			}
 			doc.setContent(doc.getTitle()+" "+doc.getAbstract());
 		}
