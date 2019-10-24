@@ -12,8 +12,8 @@ public class Main {
 	public static void main(String[] args) {
 		//create arraylists from cacm.all and stopwords.txt files
 		FileHandler fileHandler = new FileHandler();
-		ArrayList<String> cacmList = fileHandler.generateArrayFromFile("src/invert/input/cacm.all");
-		//ArrayList<String> cacmList = fileHandler.generateArrayFromFile("src/invert/input/test.txt");
+		//ArrayList<String> cacmList = fileHandler.generateArrayFromFile("src/invert/input/cacm.all");
+		ArrayList<String> cacmList = fileHandler.generateArrayFromFile("src/invert/input/test.txt");
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Would you like to enable stopword filtering? Y/N");
 		String filterInput = scan.nextLine();
@@ -44,14 +44,14 @@ public class Main {
 			//turn the user's input into a document object's abstract value, since stemming/stopword filter works specifically for document arraylists
 			ArrayList<Document> temp = new ArrayList<Document>();
 			temp.add(new Document());
-			temp.get(0).setAbstract(userInput);
+			temp.get(0).setContent(userInput);
 			if(filterInput.equalsIgnoreCase("Y")) {
 				parser.applyStopwordFilter(temp);
 			}
 			if(stemInput.equalsIgnoreCase("Y")) {
 				parser.applyStemming(temp);
 			}
-			String[] inputArray = temp.get(0).getAbstract().split("\\s+");
+			String[] inputArray = temp.get(0).toArray();
 			ArrayList<String> newInput = new ArrayList<String>();
 			for(int i = 0; i < inputArray.length; i++) {
 				newInput.add(inputArray[i].toLowerCase());
