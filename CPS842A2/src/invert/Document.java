@@ -60,6 +60,13 @@ public class Document {
 	public void setContent(String content) {
 		this.content = content;
 	}
+	public String getAllContent() {
+		autoGenerateContent();
+		if(this.authorList.length() == 0) {
+			return this.content;
+		}
+		return this.content+" "+this.authorList;
+	}
 	public void autoGenerateContent() {
 		if(this.title.length() > 0 && this.articleAbstract.length() > 0) {
 			this.content = this.title+" "+this.articleAbstract;
@@ -72,7 +79,7 @@ public class Document {
 		}
 	}
 	public String[] toArray() {
-		return this.content.split("\\s+");
+		return (this.content+" "+this.authorList).split("\\s+");
 	}
 	public ArrayList<Integer> getTermPositions(String term) {
 		List<String> terms = Arrays.asList(this.content.split("\\s+")).stream().collect(Collectors.toList());
