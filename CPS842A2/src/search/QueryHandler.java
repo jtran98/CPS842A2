@@ -26,7 +26,13 @@ public class QueryHandler {
 		for(int i = 0; i < modifiedList.size(); i++) {
 			//calculate similarity and add that to a list, as well as the doc's title and author names
 			double similarity = calculateCosineSimilarity(modifiedList, modifiedList.get(i), query);
-			similarityList.add(String.format("Sim: %.5f, T: %s, A: %s", similarity, list.get(i).getTitle(), list.get(i).getAuthors()));
+			if(similarity > 0) {
+				similarityList.add(String.format("Sim: %.5f, T: %s, A: %s", similarity, list.get(i).getTitle(), list.get(i).getAuthors()));
+			}
+			else
+			{
+				topK--;
+			}
 		}
 		//sort the array based on similarity values, since it is the first variable in each string
 		similarityList = (ArrayList<String>) similarityList.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
@@ -34,6 +40,10 @@ public class QueryHandler {
 			//add rank to every entry in similarityList
 			similarityList.set(i, "Rank: "+(i+1)+", "+similarityList.get(i));
 			System.out.println(similarityList.get(i));
+		}
+		if(topK == 0) {
+			System.out.println("No relevant documents.");
+			topK = 0;
 		}
 	}
 	//Calculates cosine similarity between a document and a query
