@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import tools.FileHandler;
+import tools.Stemmer;
+
 public class Inverter {
 	final int INTERVAL_BETWEEN_WRITES = 50;
 	public Inverter(){

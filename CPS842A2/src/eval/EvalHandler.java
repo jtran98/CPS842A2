@@ -1,9 +1,10 @@
 //Jacky Tran 500766582
 package eval;
 
-import java.util.ArrayList;
+import tools.FileHandler;
+import tools.Stemmer;
 
-import invert.FileHandler;
+import java.util.ArrayList;
 
 public class EvalHandler {
 	public EvalHandler() {
@@ -78,5 +79,47 @@ public class EvalHandler {
 		}
 		parsedQrels.add(qrel);
 		return parsedQrels;
+	}
+	//apply stopword filter to queries
+	public void applyStopwordFilter(ArrayList<Query> list) {
+		FileHandler fileHandler = new FileHandler();
+		ArrayList<String> stopwordsList = fileHandler.generateArrayFromFile("src/invert/input/stopwords.txt");
+		for(int i = 0; i < list.size(); i++) {
+			//for every line in the list, check through every filter word and remove all instances of the filter word if they appear
+			for(String filter: stopwordsList) {
+				String[] filteredQuery = list.get(i).getQuery().replaceAll("\\b"+filter+"\\b", "").split("\\s+");
+				String temp = "";
+				for(int j = 0; j < filteredQuery.length; j++) {
+					temp += filteredQuery[j]+" ";
+				}
+				list.get(i).setQuery(temp.substring(0,temp.length()-1));
+			}
+			//remove characters of whitespace at the beginning
+			while(list.get(i).getQuery().startsWith(" ")){
+				list.get(i).setQuery(list.get(i).getQuery().substring(1));
+			}
+		}
+	}
+	//Stem queries
+	public void applyStemming(ArrayList<Query> list) {
+		for(int i = 0; i < list.size(); i++) {
+			//break down each line into individual words, stem each word, then remake the new line with the stemmed words
+			Stemmer queryStemmer = new Stemmer();
+			String[] originalQuery = list.get(i).getQuery().split("\\s+");
+			String stemmedQuery = "";
+			for(int j = 0; j < originalQuery.length; j++) {
+				queryStemmer.add(originalQuery[j].toCharArray(), originalQuery[j].length());
+				queryStemmer.stem();
+				//append each stemmed word to the new stemmed line, and add a space between each word
+				stemmedQuery += queryStemmer.toString()+" ";
+			}
+			//replace the old lines with the newly stemmed lines, and remove the final whitespace
+			list.get(i).setQuery(stemmedQuery.substring(0,stemmedQuery.length()-1));
+			
+			//remove characters of whitespace at the beginning
+			while(list.get(i).getQuery().startsWith(" ")){
+				list.get(i).setQuery(list.get(i).getQuery().substring(1));
+			}
+		}
 	}
 }

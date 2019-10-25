@@ -31,7 +31,7 @@
    Release 4
 
 */
-package invert;
+package tools;
 
 /**
   * Stemmer, implementing the Porter Stemming Algorithm

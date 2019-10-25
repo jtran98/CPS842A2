@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 import invert.Document;
-import invert.FileHandler;
+import tools.FileHandler;
 
 public class QueryHandler {
 	private final double SIMILARITY_THRESHOLD = 0;

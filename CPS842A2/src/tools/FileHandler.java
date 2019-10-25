@@ -1,5 +1,5 @@
 //Jacky Tran 500766582
-package invert;
+package tools;
 
 import java.io.File;
 import java.io.FileNotFoundException;

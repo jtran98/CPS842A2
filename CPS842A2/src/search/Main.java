@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import invert.Inverter;
+import tools.FileHandler;
 import invert.Document;
-import invert.FileHandler;
 
 public class Main {
 	public static void main(String[] args) {

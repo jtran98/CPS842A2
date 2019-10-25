@@ -4,6 +4,8 @@ package invert;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import tools.FileHandler;
+
 public class Main {
 	public static void main(String[] args) {
 		//create arraylists from cacm.all and stopwords.txt files
