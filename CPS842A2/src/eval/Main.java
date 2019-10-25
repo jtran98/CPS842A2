@@ -1,3 +1,4 @@
+//Jacky Tran 500766582
 package eval;
 
 import java.util.ArrayList;
@@ -9,11 +10,9 @@ import invert.FileHandler;
 
 public class Main {
 	public static void main(String[] args) {
-		//create arraylists from cacm.all and stopwords.txt files
 		FileHandler fileHandler = new FileHandler();
 		Inverter inverter = new Inverter();
-		ArrayList<String> cacmList = fileHandler.generateArrayFromFile("src/invert/input/cacm.all");
-		ArrayList<Document> modifiedDocList = inverter.createDocumentArray(cacmList);
-		
+		EvalHandler evalHandler = new EvalHandler();
+		evalHandler.Test();
 	}
 }

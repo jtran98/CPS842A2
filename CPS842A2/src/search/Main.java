@@ -10,7 +10,6 @@ import invert.FileHandler;
 
 public class Main {
 	public static void main(String[] args) {
-		//create arraylists from cacm.all and stopwords.txt files
 		FileHandler fileHandler = new FileHandler();
 		ArrayList<String> cacmList = fileHandler.generateArrayFromFile("src/invert/input/cacm.all");
 		//ArrayList<String> cacmList = fileHandler.generateArrayFromFile("src/invert/input/test.txt");
