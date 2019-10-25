@@ -45,7 +45,7 @@ public class QueryHandler {
 			//calculate similarity and add that to a list, as well as the doc's title and author names
 			double similarity = calculateCosineSimilarity(modifiedList, modifiedList.get(i), queryAsDoc, query);
 			if(similarity > SIMILARITY_THRESHOLD) {
-				similarityList.add(String.format("Sim: %.3f, T: %s, A: %s", similarity, list.get(i).getTitle(), list.get(i).getAuthors()));
+				similarityList.add(String.format("Sim: %.3f, T: %s, A: %s, ID: %s", similarity, list.get(i).getTitle(), list.get(i).getAuthors(), list.get(i).getId()));
 			}
 		}
 		//sort the array based on similarity values, since it is the first variable in each string
