@@ -61,7 +61,7 @@ public class Document {
 		this.content = content;
 	}
 	public String[] toArray() {
-		return this.content.split("\\s+");
+		return this.content.replaceAll("\\p{Punct}", "").toLowerCase().split("\\s+");
 	}
 	public ArrayList<Integer> getTermPositions(String term) {
 		List<String> terms = Arrays.asList(this.content.split("\\s+")).stream().collect(Collectors.toList());

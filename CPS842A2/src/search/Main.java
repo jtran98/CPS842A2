@@ -4,7 +4,7 @@ package search;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import invert.DataParser;
+import invert.Inverter;
 import invert.Document;
 import invert.FileHandler;
 
@@ -27,14 +27,14 @@ public class Main {
 			System.out.println("Invalid input. Please try again.");
 			stemInput = scan.nextLine();
 		}
-		DataParser parser = new DataParser();
-		ArrayList<Document> docList = parser.createDocumentArray(cacmList);
-		ArrayList<Document> modifiedDocList = parser.createDocumentArray(cacmList);
+		Inverter inverter = new Inverter();
+		ArrayList<Document> docList = inverter.createDocumentArray(cacmList);
+		ArrayList<Document> modifiedDocList = inverter.createDocumentArray(cacmList);
 		if(filterInput.equalsIgnoreCase("Y")) {
-			parser.applyStopwordFilter(modifiedDocList);
+			inverter.applyStopwordFilter(modifiedDocList);
 		}
 		if(stemInput.equalsIgnoreCase("Y")) {
-			parser.applyStemming(modifiedDocList);
+			inverter.applyStemming(modifiedDocList);
 		}
 		
 		System.out.println("Please input your first query.");
@@ -46,10 +46,10 @@ public class Main {
 			temp.add(new Document());
 			temp.get(0).setContent(userInput);
 			if(filterInput.equalsIgnoreCase("Y")) {
-				parser.applyStopwordFilter(temp);
+				inverter.applyStopwordFilter(temp);
 			}
 			if(stemInput.equalsIgnoreCase("Y")) {
-				parser.applyStemming(temp);
+				inverter.applyStemming(temp);
 			}
 			String[] inputArray = temp.get(0).toArray();
 			ArrayList<String> newInput = new ArrayList<String>();

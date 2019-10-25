@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-public class DataParser {
+public class Inverter {
 	final int INTERVAL_BETWEEN_WRITES = 50;
-	public DataParser(){
+	public Inverter(){
 	}
 	public ArrayList<Document> createDocumentArray(ArrayList<String> contentList){
 		ArrayList<Document> docList = new ArrayList<Document>();

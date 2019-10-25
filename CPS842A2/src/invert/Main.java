@@ -23,19 +23,18 @@ public class Main {
 			stemInput = scan.nextLine();
 		}
 		scan.close();
-		DataParser parser = new DataParser();
-		//ArrayList<Document> docList = parser.createDocumentArray(cacmList);
-		ArrayList<Document> modifiedDocList = parser.createDocumentArray(cacmList);
+		Inverter inverter = new Inverter();
+		ArrayList<Document> modifiedDocList = inverter.createDocumentArray(cacmList);
 		if(filterInput.equalsIgnoreCase("Y")) {
-			parser.applyStopwordFilter(modifiedDocList);
+			inverter.applyStopwordFilter(modifiedDocList);
 		}
 		if(stemInput.equalsIgnoreCase("Y")) {
-			parser.applyStemming(modifiedDocList);
+			inverter.applyStemming(modifiedDocList);
 		}
 		
-		parser.generateDictionaryFile(modifiedDocList);
+		inverter.generateDictionaryFile(modifiedDocList);
 		System.out.println("dictionary.txt created");
-		parser.generatePostingsFile(modifiedDocList);
+		inverter.generatePostingsFile(modifiedDocList);
 		System.out.println("postings.txt created");
 	}
 }
