@@ -62,7 +62,6 @@ public class QueryHandler {
 	}
 	//Calculates cosine similarity between a document and a query
 	public double calculateCosineSimilarity(ArrayList<Document> modifiedList, Document document, Document queryAsDoc, ArrayList<String> query, HashMap<String, Integer> docFreqMap) {
-		System.out.println("Computing cossim for doc #"+document.getId());
 		ArrayList<Double> docVector = new ArrayList<Double>();
 		ArrayList<Double> queryVector = new ArrayList<Double>();
 		//creating the term vector that will be iterated through, contains all terms found in both the document and query
