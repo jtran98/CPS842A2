@@ -13,6 +13,6 @@ public class Main {
 		FileHandler fileHandler = new FileHandler();
 		Inverter inverter = new Inverter();
 		EvalHandler evalHandler = new EvalHandler();
-		evalHandler.Test();
+		evalHandler.test();
 	}
 }
