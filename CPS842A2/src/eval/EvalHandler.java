@@ -77,12 +77,6 @@ public class EvalHandler {
 			qrel.getDocIDs().add(tempDocId);
 		}
 		parsedQrels.add(qrel);
-		for(Qrel qrelx : parsedQrels) {
-			System.out.println("Query: "+qrelx.getId()+"\nDoc:");
-			for(String str : qrelx.getDocIDs()) {
-				System.out.println(str);
-			}
-		}
 		return parsedQrels;
 	}
 }
