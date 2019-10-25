@@ -7,34 +7,12 @@ import java.util.stream.Collectors;
 import invert.Document;
 
 public class QueryHandler {
-	private final double THRESHOLD = 0;
-	private final int NUMBER_OF_ENTRIES = 50;
+	private final double SIMILARITY_THRESHOLD = 0;
+	private final int NUMBER_OF_ENTRIES = 100;
 	public QueryHandler() {
 	}
 	public void parseQuery(ArrayList<Document> list, ArrayList<Document> modifiedList, ArrayList<String> query) {
-		int numberOfEntries = 100;
-		if(numberOfEntries > modifiedList.size()) {
-			numberOfEntries = modifiedList.size();
-		}
-		ArrayList<String> similarityList = new ArrayList<String>();
-		
-		//calculate queryAsDoc once since there's no point doing it for every doc in the collection for the same query
-		Document queryAsDoc = new Document();
-		String queryString = "";
-		for(String str : query) {
-			queryString += str+" ";
-		}
-		queryAsDoc.setContent(queryString);
-		
-		for(int i = 0; i < modifiedList.size(); i++) {
-			//calculate similarity and add that to a list, as well as the doc's title and author names
-			double similarity = calculateCosineSimilarity(modifiedList, modifiedList.get(i), queryAsDoc, query);
-			if(similarity > THRESHOLD) {
-				similarityList.add(String.format("Sim: %.3f, T: %s, A: %s", similarity, list.get(i).getTitle(), list.get(i).getAuthors()));
-			}
-		}
-		//sort the array based on similarity values, since it is the first variable in each string
-		similarityList = (ArrayList<String>) similarityList.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+		ArrayList<String> similarityList = getSimilarityList(list, modifiedList, query);
 		if(similarityList.size() > NUMBER_OF_ENTRIES) {
 			for(int i = 0; i < NUMBER_OF_ENTRIES; i++) {
 				//add rank to every entry in similarityList
@@ -52,6 +30,27 @@ public class QueryHandler {
 		else {
 			System.out.println("No relevant documents.");
 		}
+	}
+	public ArrayList<String> getSimilarityList(ArrayList<Document> list, ArrayList<Document> modifiedList, ArrayList<String> query) {
+		ArrayList<String> similarityList = new ArrayList<String>();
+		//calculate queryAsDoc once since there's no point doing it for every doc in the collection for the same query
+		Document queryAsDoc = new Document();
+		String queryString = "";
+		for(String str : query) {
+			queryString += str+" ";
+		}
+		queryAsDoc.setContent(queryString);
+		
+		for(int i = 0; i < modifiedList.size(); i++) {
+			//calculate similarity and add that to a list, as well as the doc's title and author names
+			double similarity = calculateCosineSimilarity(modifiedList, modifiedList.get(i), queryAsDoc, query);
+			if(similarity > SIMILARITY_THRESHOLD) {
+				similarityList.add(String.format("Sim: %.3f, T: %s, A: %s", similarity, list.get(i).getTitle(), list.get(i).getAuthors()));
+			}
+		}
+		//sort the array based on similarity values, since it is the first variable in each string
+		similarityList = (ArrayList<String>) similarityList.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+		return similarityList;
 	}
 	//Calculates cosine similarity between a document and a query
 	public double calculateCosineSimilarity(ArrayList<Document> modifiedList, Document document, Document queryAsDoc, ArrayList<String> query) {
