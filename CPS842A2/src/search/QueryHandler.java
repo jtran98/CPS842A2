@@ -21,16 +21,16 @@ public class QueryHandler {
 		for(int i = 0; i < docFreqArr.size(); i+=2) {
 			docFreqMap.put(docFreqArr.get(i).substring(6,docFreqArr.get(i).length()), Integer.parseInt(docFreqArr.get(i+1).substring(4,docFreqArr.get(i+1).length())));
 		}
-		ArrayList<String> similarityList = getSimilarityList(list, modifiedList, query, docFreqMap);
+		ArrayList<String> similarityList = new ArrayList<String>(getSimilarityList(list, modifiedList, query, docFreqMap));
+		int size = 0;
 		if(similarityList.size() > NUMBER_OF_ENTRIES) {
-			for(int i = 0; i < NUMBER_OF_ENTRIES; i++) {
-				//add rank to every entry in similarityList
-				similarityList.set(i, "Rank: "+(i+1)+", "+similarityList.get(i));
-				System.out.println(similarityList.get(i));
-			}
+			size = NUMBER_OF_ENTRIES;
 		}
 		else if(similarityList.size() > 0){
-			for(int i = 0; i < similarityList.size(); i++) {
+			size = similarityList.size();
+		}
+		if(size > 0){
+			for(int i = 0; i < size; i++) {
 				//add rank to every entry in similarityList
 				similarityList.set(i, "Rank: "+(i+1)+", "+similarityList.get(i));
 				System.out.println(similarityList.get(i));
@@ -72,7 +72,6 @@ public class QueryHandler {
 		for(String str : document.toArray()) {
 			terms.add(str);
 		}
-		
 		terms = (ArrayList<String>) terms.stream().distinct().sorted().collect(Collectors.toList());
 		//filling the doc/query vectors with weights for each term
 		for(String term : terms) {
@@ -113,6 +112,7 @@ public class QueryHandler {
 		if(result.isNaN()) {
 			result = 0.0;
 		}
+
 		return result;
 	}
 }

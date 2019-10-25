@@ -26,12 +26,14 @@ public class Main {
 			stemInput = scan.nextLine();
 		}
 		Inverter inverter = new Inverter();
-		ArrayList<Document> docList = inverter.createDocumentArray(cacmList);
-		ArrayList<Document> modifiedDocList = inverter.createDocumentArray(cacmList);
+		ArrayList<Document> docList = new ArrayList<Document>(inverter.createDocumentArray(cacmList));
+		ArrayList<Document> modifiedDocList = new ArrayList<Document>(inverter.createDocumentArray(cacmList));
 		if(filterInput.equalsIgnoreCase("Y")) {
+			System.out.println("Filtering");
 			inverter.applyStopwordFilter(modifiedDocList);
 		}
 		if(stemInput.equalsIgnoreCase("Y")) {
+			System.out.println("Stemming");
 			inverter.applyStemming(modifiedDocList);
 		}
 		
@@ -42,7 +44,8 @@ public class Main {
 			//turn the user's input into a document object's abstract value, since stemming/stopword filter works specifically for document arraylists
 			ArrayList<Document> temp = new ArrayList<Document>();
 			temp.add(new Document());
-			temp.get(0).setContent(userInput);
+			//this must be setAbstract (or setTitle presumably) to work, setContent breaks it.
+			temp.get(0).setAbstract(userInput);
 			if(filterInput.equalsIgnoreCase("Y")) {
 				inverter.applyStopwordFilter(temp);
 			}
@@ -54,7 +57,6 @@ public class Main {
 			for(int i = 0; i < inputArray.length; i++) {
 				newInput.add(inputArray[i].toLowerCase());
 			}
-			
 			queryHandler.parseQuery(docList, modifiedDocList, newInput);
 			
 			System.out.println("Please input your next query, or 'ZZEND' to finish.");
