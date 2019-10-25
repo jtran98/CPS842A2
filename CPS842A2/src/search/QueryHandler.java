@@ -66,7 +66,6 @@ public class QueryHandler {
 		//ignores all other terms, since weight=TF*IDF and TF being 0 would make terms not found in either document/query adds unnecessary summing of 0s
 		//for the magnitude/dot product
 		ArrayList<String> terms = new ArrayList<String>(query);
-		
 		for(String str : document.toArray()) {
 			terms.add(str);
 		}
@@ -78,10 +77,15 @@ public class QueryHandler {
 			int queryFreq = queryAsDoc.getFrequencyOfTerm(term);
 			int termCount = 0;
 			//change this to read from the dictionary file instead of calculating document frequency again
+			//increments if term appears in a doc
 			for(Document doc : modifiedList) {
 				if(doc.getContent().contains(term)) {
 					termCount++;
 				}
+			}
+			//increments if term appears in query, separate so query does not have to be added to the modifiedList
+			if(queryAsDoc.getContent().contains(term)) {
+				termCount++;
 			}
 			double idf = Math.log10(modifiedList.size()/termCount);
 			double docTF = 0;
