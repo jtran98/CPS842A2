@@ -841,6 +841,10 @@ Term: 1386
 Doc #1997
 Freq: 1
 Pos: 124
+Term: 13891
+Doc #3191
+Freq: 1
+Pos: 33
 Term: 139
 Doc #450
 Freq: 1
@@ -1144,6 +1148,10 @@ Pos: 52
 Doc #2004
 Freq: 1
 Pos: 58
+Term: 1604a
+Doc #3187
+Freq: 1
+Pos: 20
 Term: 161
 Doc #704
 Freq: 1
@@ -4377,6 +4385,10 @@ Pos: 6
 Doc #779
 Freq: 1
 Pos: 4
+Term: 439
+Doc #3190
+Freq: 1
+Pos: 13
 Term: 44
 Doc #357
 Freq: 1
@@ -5648,6 +5660,10 @@ Term: 84bit
 Doc #1152
 Freq: 1
 Pos: 4
+Term: 84character
+Doc #3196
+Freq: 1
+Pos: 6
 Term: 85
 Doc #501
 Freq: 1
@@ -83849,6 +83865,10 @@ Pos: 1
 Doc #3023
 Freq: 1
 Pos: 11
+Term: considerd
+Doc #3186
+Freq: 1
+Pos: 5
 Term: considered
 Doc #278
 Freq: 2

@@ -142,6 +142,8 @@ Term: 138
 DF: 1
 Term: 1386
 DF: 1
+Term: 13891
+DF: 1
 Term: 139
 DF: 2
 Term: 14
@@ -214,6 +216,8 @@ Term: 16000
 DF: 1
 Term: 1604
 DF: 2
+Term: 1604a
+DF: 1
 Term: 161
 DF: 3
 Term: 162
@@ -1034,6 +1038,8 @@ Term: 42
 DF: 4
 Term: 43
 DF: 3
+Term: 439
+DF: 1
 Term: 44
 DF: 1
 Term: 444
@@ -1301,6 +1307,8 @@ DF: 1
 Term: 84
 DF: 5
 Term: 84bit
+DF: 1
+Term: 84character
 DF: 1
 Term: 85
 DF: 3
@@ -5820,6 +5828,8 @@ Term: consideration
 DF: 18
 Term: considerations
 DF: 20
+Term: considerd
+DF: 1
 Term: considered
 DF: 107
 Term: consideredmultiple
