@@ -5,17 +5,112 @@ import tools.FileHandler;
 import tools.Stemmer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import invert.Document;
+import search.QueryHandler;
 
 public class EvalHandler {
 	private final String QUERY_FILE_PATH = "src/eval/input/query.txt";
 	private final String QRELS_FILE_PATH = "src/eval/input/qrels.txt";
 	private final String STOPWORDS_FILE_PATH = "src/invert/input/stopwords.txt";
+	private final String DICTIONARY_FILE_PATH = "src/invert/output/dictionary.txt";
+	private final String WRITE_FILE_PATH = "src/eval/output/";
+	private final String R_PRECISION_FILE_NAME = "r_precision_values.txt";
+	private FileHandler fileHandler = new FileHandler();
 	public EvalHandler() {
 		
 	}
-	public void test() {
-		ArrayList<Query> queryList = new ArrayList<Query>(getQueryArray());
-		ArrayList<Qrel> qrelList = new ArrayList<Qrel>(getQrelArray());
+	public void writeMeanAveragePrecision(ArrayList<Query> queryList, ArrayList<Qrel> qrelList, ArrayList<Document> list, ArrayList<Document> modifiedList) {
+		double meanAP = 0;
+		//required code to get similarityList
+		QueryHandler queryHandler = new QueryHandler();
+		fileHandler.printFile(R_PRECISION_FILE_NAME, "", WRITE_FILE_PATH);
+		ArrayList<String> docFreqArr = fileHandler.generateArrayFromFile(DICTIONARY_FILE_PATH);
+		HashMap<String, Integer> docFreqMap = new HashMap<String, Integer>();
+		for(int i = 0; i < docFreqArr.size(); i+=2) {
+			docFreqMap.put(docFreqArr.get(i).substring(6,docFreqArr.get(i).length()), Integer.parseInt(docFreqArr.get(i+1).substring(4,docFreqArr.get(i+1).length())));
+		}
+		//calculate AP sum
+		//this counter is required due to qrels missing relevant doc ids for some queries
+		int numberOfAPsCalculated = 0;
+		for(int i = 0; i < queryList.size(); i++) {
+			String[] queryAsArray = queryList.get(i).getQuery().split("\\s+");
+			ArrayList<String> queryAsArrayList = new ArrayList<String>();
+			for(String str : queryAsArray) {
+				queryAsArrayList.add(str);
+			}
+			ArrayList<String> similarityList = queryHandler.getSimilarityList(list, modifiedList, queryAsArrayList, docFreqMap);
+			//2nd loop required since qrels has missing relevant doc ids, would cause a mismatch otherwise
+			for(int j = 0; j < qrelList.size(); j++) {
+				if(queryList.get(i).getId().equals(qrelList.get(j).getId())) {
+					meanAP += getAveragePrecision(queryList.get(i),qrelList.get(j), similarityList);
+					numberOfAPsCalculated ++;
+				}
+			}
+		}
+		//divide to get MAP
+		meanAP /= numberOfAPsCalculated;
+		String fileContent = "Mean Average Precision: "+meanAP;
+		fileHandler.printFile("mean_average_precision.txt", fileContent, WRITE_FILE_PATH);
+	}
+	public double getAveragePrecision(Query query, Qrel qrel, ArrayList<String> similarityList) {
+		double result = 0;
+		//-1 since qrels start at 1 but queries start at 0
+		ArrayList<String> relevantDocs = new ArrayList<String>(qrel.getDocIDs());
+		ArrayList<String> retrievedDocs = new ArrayList<String>();
+		for(String str : similarityList) {
+			String temp = str;
+			//trim similarityList entries until you get to the id
+			while(!temp.startsWith("ID: ")) {
+				temp = temp.substring(1, temp.length());
+			}
+			//get the id
+			temp = temp.substring(4, temp.length());
+			retrievedDocs.add(temp);
+		}
+		//compare results between the actual relevant docs retrieved from qrels and the calculated cossim ones from assumedRelevantDocs
+		ArrayList<Integer> indexOfMatches = new ArrayList<Integer>();
+		//iterate through all retrieved documents and see if they match the relevant documents
+		for(int i = 0; i < retrievedDocs.size(); i++) {
+			//if all relevant documents are found, finish
+			if(indexOfMatches.size() == relevantDocs.size()) {
+				break;
+			}
+			else {
+				//if a docID from the relevant list matches a doc id from the retrieved list, increment numberOfMatches
+				for(String relevantDocId : relevantDocs) {
+					if(retrievedDocs.get(i).equals(relevantDocId)) {
+						//break since there are no repeating relevant doc ids in the same query
+						indexOfMatches.add((i+1));
+						break;
+					}
+				}
+			}
+		}
+		//calculate R-Precision
+		ArrayList<Double> precisionValues = new ArrayList<Double>(getRPrecision(indexOfMatches));
+		String printString = "R-Values for Query #"+query.getId()+"\n";
+		for(double value : precisionValues) {
+			String temp = String.format("%.3f, ", value);
+			printString += temp;
+		}
+		printString = printString.substring(0,printString.length()-2)+"\n";
+		fileHandler.appendFile(R_PRECISION_FILE_NAME, printString, WRITE_FILE_PATH);
+		double numerator = 0;
+		for(double precision : precisionValues) {
+			numerator += precision;
+		}
+		result = numerator/relevantDocs.size();
+		return result;
+	}
+	//finds recall values uninterpolated
+	public ArrayList<Double> getRPrecision(ArrayList<Integer> indexOfMatches){
+		ArrayList<Double> precisionValues = new ArrayList<Double>();
+		for(int i = 0; i < indexOfMatches.size(); i++) {
+			precisionValues.add((1.0/(double)indexOfMatches.get(i)));
+		}
+		return precisionValues;
 	}
 	//convert the read file of query.txt into an arraylist of query objects
 	public ArrayList<Query> getQueryArray() {
