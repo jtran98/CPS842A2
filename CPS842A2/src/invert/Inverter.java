@@ -13,7 +13,9 @@ import tools.FileHandler;
 import tools.Stemmer;
 
 public class Inverter {
-	final int INTERVAL_BETWEEN_WRITES = 50;
+	private final int INTERVAL_BETWEEN_WRITES = 50;
+	private final String WRITE_FILE_PATH = "src/invert/output/";
+	private final String STOPWORD_FILE_PATH = "src/invert/input/stopwords.txt";
 	public Inverter(){
 	}
 	public ArrayList<Document> createDocumentArray(ArrayList<String> contentList){
@@ -125,7 +127,7 @@ public class Inverter {
 	//filters out all the stopwords in all the titles and abstracts of the document array, as well as updating the content fields
 	public void applyStopwordFilter(ArrayList<Document> list){
 		FileHandler fileHandler = new FileHandler();
-		ArrayList<String> stopwordsList = fileHandler.generateArrayFromFile("src/invert/input/stopwords.txt");
+		ArrayList<String> stopwordsList = fileHandler.generateArrayFromFile(STOPWORD_FILE_PATH);
 		for(int i = 0; i < list.size(); i++) {
 			//for every line in the list, check through every filter word and remove all instances of the filter word if they appear
 			for(String filter: stopwordsList) {
@@ -155,7 +157,7 @@ public class Inverter {
 	//generates the appropriate string for the dictionary file (alphabetically sorted terms as keys, and values being their document frequency)
 	public void generateDictionaryFile(ArrayList<Document> list) {
 		FileHandler fileHandler = new FileHandler();
-		fileHandler.printFile("dictionary.txt", "");
+		fileHandler.printFile("dictionary.txt", "",WRITE_FILE_PATH);
 		HashMap<String, Integer> termFrequencyMap = new HashMap<String, Integer>();
 		//ArrayList<String> allTerms = new ArrayList<String>();
 		//for every document, break down the content into a string array and find first occurrence of every term
@@ -184,13 +186,13 @@ public class Inverter {
 		for(String term : allTerms) {
 			result +="Term: "+term+"\nDF: "+sortedDocFrequencyMap.get(term)+"\n";
 			if(index == INTERVAL_BETWEEN_WRITES) {
-				fileHandler.appendFile("dictionary.txt", result);
+				fileHandler.appendFile("dictionary.txt", result,WRITE_FILE_PATH);
 				index = 0;
 				result = "";
 			}
 			index++;
 		}
-		fileHandler.appendFile("dictionary.txt", result);
+		fileHandler.appendFile("dictionary.txt", result,WRITE_FILE_PATH);
 	}
 	
 	/**generates string for postings file, contains every term, which documents they show up in (using sorted document ids), how
@@ -198,7 +200,7 @@ public class Inverter {
 	*/
 	public void generatePostingsFile(ArrayList<Document> list) {
 		FileHandler fileHandler = new FileHandler();
-		fileHandler.printFile("postings.txt", "");
+		fileHandler.printFile("postings.txt", "",WRITE_FILE_PATH);
 		
 		ArrayList<String> terms = getAllTerms(list);
 		
@@ -224,12 +226,12 @@ public class Inverter {
 			}
 			index++;
 			if(index == INTERVAL_BETWEEN_WRITES) {
-				fileHandler.appendFile("postings.txt", result);
+				fileHandler.appendFile("postings.txt", result,WRITE_FILE_PATH);
 				index = 0;
 				result = "";
 			}
 		}
-		fileHandler.appendFile("postings.txt", result);
+		fileHandler.appendFile("postings.txt", result, WRITE_FILE_PATH);
 	}
 	//generates arraylist containing all terms in a document list, sorted alphabetically
 	public ArrayList<String> getAllTerms(ArrayList<Document> list){
