@@ -162,7 +162,7 @@ public class Inverter {
 			//for every term in the content variable of the document
 			for(int i = 0; i < terms.size(); i++) {
 				//if statement makes sure only the first instance of each term in a doc is recorded
-				if(temp.get(terms.get(i))==null) {
+				if(temp.get(terms.get(i)) == null) {
 					temp.put(terms.get(i),true);
 					//increase count everytime a term appears (only once per document)
 					int count = termFrequencyMap.containsKey(terms.get(i)) ? termFrequencyMap.get(terms.get(i)) : 0;
@@ -235,10 +235,6 @@ public class Inverter {
 		for(Document doc : list) {
 			List<String> terms = Arrays.asList(doc.toArray()).stream().sorted().collect(Collectors.toList());
 			for(int i = 0; i < terms.size(); i++) {
-				if(terms.get(i).equals("")) {
-					terms.remove(i);
-					continue;
-				}
 				tempTerms.add(terms.get(i));
 			}			
 		}
