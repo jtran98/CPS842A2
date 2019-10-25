@@ -7,6 +7,9 @@ import tools.Stemmer;
 import java.util.ArrayList;
 
 public class EvalHandler {
+	private final String QUERY_FILE_PATH = "src/eval/input/query.txt";
+	private final String QRELS_FILE_PATH = "src/eval/input/qrels.txt";
+	private final String STOPWORDS_FILE_PATH = "src/invert/input/stopwords.txt";
 	public EvalHandler() {
 		
 	}
@@ -17,7 +20,7 @@ public class EvalHandler {
 	//convert the read file of query.txt into an arraylist of query objects
 	public ArrayList<Query> getQueryArray() {
 		FileHandler fileHandler = new FileHandler();
-		ArrayList<String> queryList = fileHandler.generateArrayFromFile("src/eval/input/query.txt");
+		ArrayList<String> queryList = fileHandler.generateArrayFromFile(QUERY_FILE_PATH);
 		ArrayList<Query> parsedQueries = new ArrayList<Query>();
 		Query query = new Query();
 		for(int i = 0; i < queryList.size(); i++) {
@@ -50,7 +53,7 @@ public class EvalHandler {
 	//convert the read file of qrels.txt into an arraylist of qrel objects
 	public ArrayList<Qrel> getQrelArray(){
 		FileHandler fileHandler = new FileHandler();
-		ArrayList<String> qrelsList = fileHandler.generateArrayFromFile("src/eval/input/qrels.txt");
+		ArrayList<String> qrelsList = fileHandler.generateArrayFromFile(QRELS_FILE_PATH);
 		ArrayList<Qrel> parsedQrels = new ArrayList<Qrel>();
 		
 		Qrel qrel = new Qrel();
@@ -83,7 +86,7 @@ public class EvalHandler {
 	//apply stopword filter to queries
 	public void applyStopwordFilter(ArrayList<Query> list) {
 		FileHandler fileHandler = new FileHandler();
-		ArrayList<String> stopwordsList = fileHandler.generateArrayFromFile("src/invert/input/stopwords.txt");
+		ArrayList<String> stopwordsList = fileHandler.generateArrayFromFile(STOPWORDS_FILE_PATH);
 		for(int i = 0; i < list.size(); i++) {
 			//for every line in the list, check through every filter word and remove all instances of the filter word if they appear
 			for(String filter: stopwordsList) {

@@ -11,11 +11,12 @@ import tools.FileHandler;
 public class QueryHandler {
 	private final double SIMILARITY_THRESHOLD = 0;
 	private final int NUMBER_OF_ENTRIES = 100;
+	private final String DICTIONARY_FILE_PATH = "src/invert/output/dictionary.txt";
 	public QueryHandler() {
 	}
 	public void parseQuery(ArrayList<Document> list, ArrayList<Document> modifiedList, ArrayList<String> query) {
 		FileHandler fileHandler = new FileHandler();
-		ArrayList<String> docFreqArr = fileHandler.generateArrayFromFile("src/invert/output/dictionary.txt");
+		ArrayList<String> docFreqArr = fileHandler.generateArrayFromFile(DICTIONARY_FILE_PATH);
 		HashMap<String, Integer> docFreqMap = new HashMap<String, Integer>();
 		for(int i = 0; i < docFreqArr.size(); i+=2) {
 			docFreqMap.put(docFreqArr.get(i).substring(6,docFreqArr.get(i).length()), Integer.parseInt(docFreqArr.get(i+1).substring(4,docFreqArr.get(i+1).length())));

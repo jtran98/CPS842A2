@@ -28,10 +28,10 @@ public class FileHandler {
 		return array;
 	}
 	//Prints a file into the output folder, requires a file name and the file's content as a string
-	public void printFile(String fileName, String fileContent) {
+	public void printFile(String fileName, String fileContent, String filePath) {
 		byte[] bytesArray = fileContent.getBytes();
 		try {
-			File file = new File("src/invert/output/"+fileName);
+			File file = new File(filePath+fileName);
 			FileOutputStream outputStream = new FileOutputStream(file);
 			file.createNewFile();
 			outputStream.write(bytesArray);
@@ -46,10 +46,10 @@ public class FileHandler {
 		}
 		
 	}
-	public void appendFile(String fileName, String fileContent) {
+	public void appendFile(String fileName, String fileContent, String filePath) {
 		byte[] bytesArray = fileContent.getBytes();
 		try {
-			File file = new File("src/invert/output/"+fileName);
+			File file = new File(filePath+fileName);
 			FileOutputStream outputStream = new FileOutputStream(file,true);
 			outputStream.write(bytesArray);
 			outputStream.flush();
