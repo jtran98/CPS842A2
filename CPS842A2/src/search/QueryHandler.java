@@ -3,8 +3,10 @@ package search;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 import invert.Document;
+import invert.FileHandler;
 
 public class QueryHandler {
 	private final double SIMILARITY_THRESHOLD = 0;
@@ -12,7 +14,13 @@ public class QueryHandler {
 	public QueryHandler() {
 	}
 	public void parseQuery(ArrayList<Document> list, ArrayList<Document> modifiedList, ArrayList<String> query) {
-		ArrayList<String> similarityList = getSimilarityList(list, modifiedList, query);
+		FileHandler fileHandler = new FileHandler();
+		ArrayList<String> docFreqArr = fileHandler.generateArrayFromFile("src/invert/output/dictionary.txt");
+		HashMap<String, Integer> docFreqMap = new HashMap<String, Integer>();
+		for(int i = 0; i < docFreqArr.size(); i+=2) {
+			docFreqMap.put(docFreqArr.get(i).substring(6,docFreqArr.get(i).length()), Integer.parseInt(docFreqArr.get(i+1).substring(4,docFreqArr.get(i+1).length())));
+		}
+		ArrayList<String> similarityList = getSimilarityList(list, modifiedList, query, docFreqMap);
 		if(similarityList.size() > NUMBER_OF_ENTRIES) {
 			for(int i = 0; i < NUMBER_OF_ENTRIES; i++) {
 				//add rank to every entry in similarityList
@@ -31,7 +39,7 @@ public class QueryHandler {
 			System.out.println("No relevant documents.");
 		}
 	}
-	public ArrayList<String> getSimilarityList(ArrayList<Document> list, ArrayList<Document> modifiedList, ArrayList<String> query) {
+	public ArrayList<String> getSimilarityList(ArrayList<Document> list, ArrayList<Document> modifiedList, ArrayList<String> query, HashMap<String, Integer> docFreqMap) {
 		ArrayList<String> similarityList = new ArrayList<String>();
 		//calculate queryAsDoc once since there's no point doing it for every doc in the collection for the same query
 		Document queryAsDoc = new Document();
@@ -43,7 +51,7 @@ public class QueryHandler {
 		
 		for(int i = 0; i < modifiedList.size(); i++) {
 			//calculate similarity and add that to a list, as well as the doc's title and author names
-			double similarity = calculateCosineSimilarity(modifiedList, modifiedList.get(i), queryAsDoc, query);
+			double similarity = calculateCosineSimilarity(modifiedList, modifiedList.get(i), queryAsDoc, query, docFreqMap);
 			if(similarity > SIMILARITY_THRESHOLD) {
 				similarityList.add(String.format("Sim: %.3f, T: %s, A: %s, ID: %s", similarity, list.get(i).getTitle(), list.get(i).getAuthors(), list.get(i).getId()));
 			}
@@ -53,7 +61,7 @@ public class QueryHandler {
 		return similarityList;
 	}
 	//Calculates cosine similarity between a document and a query
-	public double calculateCosineSimilarity(ArrayList<Document> modifiedList, Document document, Document queryAsDoc, ArrayList<String> query) {
+	public double calculateCosineSimilarity(ArrayList<Document> modifiedList, Document document, Document queryAsDoc, ArrayList<String> query, HashMap<String, Integer> docFreqMap) {
 		System.out.println("Computing cossim for doc #"+document.getId());
 		ArrayList<Double> docVector = new ArrayList<Double>();
 		ArrayList<Double> queryVector = new ArrayList<Double>();
@@ -70,15 +78,8 @@ public class QueryHandler {
 		for(String term : terms) {
 			int docFreq = document.getFrequencyOfTerm(term);
 			int queryFreq = queryAsDoc.getFrequencyOfTerm(term);
-			int termCount = 0;
-			//change this to read from the dictionary file instead of calculating document frequency again
-			//increments if term appears in a doc
-			for(Document doc : modifiedList) {
-				if(doc.getContent().contains(term)) {
-					termCount++;
-				}
-			}
-			//increments if term appears in query, separate so query does not have to be added to the modifiedList
+			int termCount = docFreqMap.get(term);
+			//increments if term appears in query
 			if(queryAsDoc.getContent().contains(term)) {
 				termCount++;
 			}
