@@ -78,7 +78,10 @@ public class QueryHandler {
 		for(String term : terms) {
 			int docFreq = document.getFrequencyOfTerm(term);
 			int queryFreq = queryAsDoc.getFrequencyOfTerm(term);
-			int termCount = docFreqMap.get(term);
+			int termCount = 0;
+			if(docFreqMap.containsKey(term)) {
+				termCount = docFreqMap.get(term);
+			}
 			//increments if term appears in query
 			if(queryAsDoc.getContent().contains(term)) {
 				termCount++;
