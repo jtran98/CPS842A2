@@ -10,7 +10,7 @@ import tools.FileHandler;
 
 public class QueryHandler {
 	private final double SIMILARITY_THRESHOLD = 0;
-	private final int NUMBER_OF_ENTRIES = 1000;
+	private final int NUMBER_OF_ENTRIES = 100;
 	private final String DICTIONARY_FILE_PATH = "src/invert/output/dictionary.txt";
 	public QueryHandler() {
 	}
