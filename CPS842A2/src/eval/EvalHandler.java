@@ -21,10 +21,10 @@ public class EvalHandler {
 	public EvalHandler() {
 		
 	}
-	public void writeMeanAveragePrecision(ArrayList<Query> queryList, ArrayList<Qrel> qrelList, ArrayList<Document> list, ArrayList<Document> modifiedList) {
+	public void writeMeanAveragePrecision(ArrayList<Query> queryList, ArrayList<Qrel> qrelList, ArrayList<Document> list, ArrayList<Document> modifiedList, double cosSimCoefficient, double pageRankCoefficient) {
 		double meanAP = 0;
 		//required code to get similarityList
-		QueryHandler queryHandler = new QueryHandler();
+		QueryHandler queryHandler = new QueryHandler(cosSimCoefficient, pageRankCoefficient);
 		fileHandler.printFile(R_PRECISION_FILE_NAME, "", WRITE_FILE_PATH);
 		ArrayList<String> docFreqArr = fileHandler.generateArrayFromFile(DICTIONARY_FILE_PATH);
 		HashMap<String, Integer> docFreqMap = new HashMap<String, Integer>();

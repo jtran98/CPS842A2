@@ -107625,29 +107625,6 @@ CA580702 ES March 17, 1982 10:10 AM
 3192	6	3192
 3193	6	3192
 730	6	3192
-.I 3193
-.T
-.W
-   Work is in progress on a formula coding technique allowing direct entry
-into the computer of formulae typed on an 84 character Flexo-writer. This
-Flexo-writer will be modified for automatic half-line advance and retract,
-without carriage return, to permit completely general sub and superscripting.
-.B
-CACM July, 1958
-.N
-CA580703 ES March 17, 1982 10:10 AM
-.X
-3193	4	3193
-796	4	3193
-1083	5	3193
-491	5	3193
-3193	5	3193
-3193	5	3193
-3193	5	3193
-407	6	3193
-3192	6	3193
-3193	6	3193
-730	6	3193
 .I 3194
 .T
    A Non-heuristic Program for Proving Elementary Logical Theorems

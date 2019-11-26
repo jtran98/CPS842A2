@@ -6,13 +6,21 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 import invert.Document;
+import invert.Inverter;
+import invert.Link;
 import tools.FileHandler;
 
 public class QueryHandler {
 	private final double SIMILARITY_THRESHOLD = 0;
-	private final int NUMBER_OF_ENTRIES = 100;
+	private final int NUMBER_OF_ENTRIES = 10;
+	private final double DAMPING_FACTOR = 0.85;
 	private final String DICTIONARY_FILE_PATH = "src/invert/output/dictionary.txt";
-	public QueryHandler() {
+	private double cosSimCoefficient;
+	private double pageRankCoefficient;
+	
+	public QueryHandler(double cosSim, double pageRank) {
+		cosSimCoefficient = cosSim;
+		pageRankCoefficient = pageRank;
 	}
 	public void parseQuery(ArrayList<Document> list, ArrayList<Document> modifiedList, ArrayList<String> query) {
 		FileHandler fileHandler = new FileHandler();
@@ -42,6 +50,13 @@ public class QueryHandler {
 	}
 	public ArrayList<String> getSimilarityList(ArrayList<Document> list, ArrayList<Document> modifiedList, ArrayList<String> query, HashMap<String, Integer> docFreqMap) {
 		ArrayList<String> similarityList = new ArrayList<String>();
+		Inverter inverter = new Inverter();
+		FileHandler fileHandler = new FileHandler();
+		ArrayList<String> cacmList = fileHandler.generateArrayFromFile("src/invert/input/cacm.all");
+		//doclist is created so the inverter's citations list can be generated
+		//fix later so that creating the citations list isn't dependent on this
+		ArrayList<Document> docList = new ArrayList<Document>(inverter.createDocumentArray(cacmList));
+		ArrayList<Link> citationsList = new ArrayList<Link>(inverter.getCitations());
 		//calculate queryAsDoc once since there's no point doing it for every doc in the collection for the same query
 		Document queryAsDoc = new Document();
 		String queryString = "";
@@ -53,13 +68,41 @@ public class QueryHandler {
 		for(int i = 0; i < modifiedList.size(); i++) {
 			//calculate similarity and add that to a list, as well as the doc's title and author names
 			double similarity = calculateCosineSimilarity(modifiedList, modifiedList.get(i), queryAsDoc, query, docFreqMap);
-			if(similarity > SIMILARITY_THRESHOLD) {
-				similarityList.add(String.format("Sim: %.3f, T: %s, A: %s, ID: %s", similarity, list.get(i).getTitle(), list.get(i).getAuthors(), list.get(i).getId()));
+			String docId = Integer.toString(i+1);
+			double pageRank =  calculatePageRank(citationsList,docId);
+			double score = (cosSimCoefficient*similarity) + (pageRankCoefficient*pageRank);
+			if(score > SIMILARITY_THRESHOLD) {
+				similarityList.add(String.format("Score: %.3f, T: %s, A: %s, ID: %s", score, list.get(i).getTitle(), list.get(i).getAuthors(), list.get(i).getId()));
 			}
 		}
 		//sort the array based on similarity values, since it is the first variable in each string
 		similarityList = (ArrayList<String>) similarityList.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
 		return similarityList;
+	}
+	//calculates pagerank for a document, assumes all pages have an initial PR of 0.01
+	public double calculatePageRank(ArrayList<Link> citations, String docId) {
+		//for every link, if a document X is connected to the doc with id docId:
+		//find every document that X links to, and divide doc X's PR/# of linked docs
+		//repeat for every doc that links to doc #docId, then multiply everything by damping factor
+		ArrayList<Double> values = new ArrayList<Double>();
+		for(Link link : citations) {
+			if(link.getConnection().equals(docId)) {
+				String connectionValue = link.getValue();
+				double numberOfConnections = 0;
+				for(Link link2 : citations) {
+					if(link2.getValue().equals(connectionValue)) {
+						numberOfConnections++;
+					}
+				}
+				values.add((0.01/numberOfConnections));
+			}
+		}
+		double sum = 0;
+		for(Double num : values) {
+			sum += num;
+		}
+		sum *= DAMPING_FACTOR;
+		return sum;
 	}
 	//Calculates cosine similarity between a document and a query
 	public double calculateCosineSimilarity(ArrayList<Document> modifiedList, Document document, Document queryAsDoc, ArrayList<String> query, HashMap<String, Integer> docFreqMap) {

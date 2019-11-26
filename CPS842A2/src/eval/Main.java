@@ -18,6 +18,12 @@ public class Main {
 		ArrayList<Document> modifiedDocList = inverter.createDocumentArray(cacmList);
 		
 		Scanner scan = new Scanner(System.in);
+		System.out.println("Please enter a coefficient value for Cosine Similarity Score (W1)");
+		String w1 = scan.nextLine();
+		System.out.println("Please enter a coefficient value for Page Rank (W2)");
+		String w2 = scan.nextLine();
+		double d1 = Double.parseDouble(w1);
+		double d2 = Double.parseDouble(w2);
 		System.out.println("Would you like to enable stopword filtering? Y/N");
 		String filterInput = scan.nextLine();
 		while(!filterInput.equalsIgnoreCase("Y") && !filterInput.equalsIgnoreCase("N")) {
@@ -41,6 +47,6 @@ public class Main {
 			evalHandler.applyStemming(queryList);
 			inverter.applyStemming(modifiedDocList);
 		}
-		evalHandler.writeMeanAveragePrecision(queryList, qrelList, docList, modifiedDocList);
+		evalHandler.writeMeanAveragePrecision(queryList, qrelList, docList, modifiedDocList,d1,d2);
 	}
 }

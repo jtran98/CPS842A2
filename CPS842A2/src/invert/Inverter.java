@@ -16,9 +16,11 @@ public class Inverter {
 	private final int INTERVAL_BETWEEN_WRITES = 50;
 	private final String WRITE_FILE_PATH = "src/invert/output/";
 	private final String STOPWORD_FILE_PATH = "src/invert/input/stopwords.txt";
+	ArrayList<Link> citations;
 	public Inverter(){
 	}
 	public ArrayList<Document> createDocumentArray(ArrayList<String> contentList){
+		citations = new ArrayList<Link>();
 		ArrayList<Document> docList = new ArrayList<Document>();
 		Document doc = new Document();
 		for(int i = 0; i < contentList.size(); i++) {
@@ -82,11 +84,35 @@ public class Inverter {
 				}
 				doc.setAuthors(temp.substring(0,temp.length()-1));
 			}
+			//get citations
+			else if(contentList.get(i).equals(".X")) {
+				String citation = "";
+				for(int j = i+1; j < contentList.size(); j++) {
+					citation = contentList.get(j)+" ";
+					String[] citationArr = citation.replaceAll("\\p{Punct}", "").toLowerCase().split("\\s+");
+					if(citationArr.length == 3 && citationArr[1].equalsIgnoreCase("5")) {
+						citations.add(new Link(citationArr[0], citationArr[2]));
+					}
+					try {
+						if(contentList.get(j+1).startsWith(".") && contentList.get(j+1).length() == 2) {
+						break;
+						}
+					}
+					//since .X parameter is the very last thing in cacm.all, if there's an out of bounds exception
+					//then that means the file is finished and therefore that final .X field is also finished.
+					catch (IndexOutOfBoundsException e){
+						break;
+					}
+				}
+			}
 			doc.setContent(doc.getTitle()+" "+doc.getAbstract()+" "+doc.getAuthors());
 		}
 		//adds final document to document array
 		docList.add(doc);
 		return docList;
+	}
+	public ArrayList<Link> getCitations(){
+		return citations;
 	}
 	//stems all the words in the document array's title and abstract fields, as well as updates the content fields
 	public void applyStemming(ArrayList<Document> list){
